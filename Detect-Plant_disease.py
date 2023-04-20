@@ -41,17 +41,6 @@ if uploaded_file:
         import openai
         messages = [{'role': 'system', 'content': 'You are a helpful assistant.'}]
         st.write('下面是针对这种病害的简单介绍及防治方法')
-        openai.api_key = "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"
-        user_msg = '简单介绍一下' + pred_label + '及其防治方法'
-        messages.append({'role': 'user', 'content': user_msg})
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=messages,
-            temperature=0.9,  # 对于温度，较高的值（如 0.8）将使输出更加随机，而较低的值（如 0.2）将使其更加集中和确定
-            max_tokens=500)
-        assistant_msg = response.choices[0]['message']['content']
-        messages.append({'role': 'assistant', 'content': assistant_msg})
-        st.write(assistant_msg)
     except:
         st.error('识别失败,请重新上传图片,下面是识别成功的示例')
         pred_label = '苹果黑星病'
