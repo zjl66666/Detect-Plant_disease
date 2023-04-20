@@ -26,14 +26,14 @@ def get_prediction(img_data):
 st.set_page_config(page_title='植物病虫害识别', page_icon='🌼', layout='centered', initial_sidebar_state='auto')
 st.balloons()
 st.title("植物病虫害识别🌼 ")
-uploaded_file = st.file_uploader('选择一张植物病虫害叶子照片🐛')
+uploaded_file = st.file_uploader('选择一张植物病虫害叶子照片📷')
 if uploaded_file:
     st.image(uploaded_file, caption='上传的文件')
     img_data = uploaded_file.read()
     try:
         pred = get_prediction(img_data)
         pred_label = pred['predicted_label']
-        st.subheader(f'该病害最有可能为{pred_label}')
+        st.subheader(f'该病害最有可能为{pred_label}🐛')
         with st.expander('查看更多信息'):
             st.write('预测结果及其可能的概率')
             for data in pred['scores']:
