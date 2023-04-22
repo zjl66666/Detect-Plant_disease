@@ -18,6 +18,7 @@ identification_scope = """
 甜椒🌶️
 南瓜🎃
 """
+st.set_page_config(page_title='病虫害百科', page_icon='📚', layout='centered', initial_sidebar_state='auto')
 st.title('病虫害百科📚')
 # 写一个侧边栏，含有一个selectbox，让用户选择要展示的植物种类
 st.sidebar.title('选择要展示的植物种类☘️')
@@ -38,10 +39,9 @@ for file in os.listdir('./json数据'):
                 eval(f'col{i % 3 + 1}').image(Image.open(BytesIO(base64.b64decode(img))))
             # with st.expander('更多信息'):
             #     st.text(data['info'])
-            st.write('-'*100)
-            with st.container():
+            with st.expander('基本信息',expanded=True):
                 st.text(data['info'])
-            st.write('-'*100)
+
 
 
 
