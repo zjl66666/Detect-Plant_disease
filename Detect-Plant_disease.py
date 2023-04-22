@@ -54,7 +54,7 @@ def get_prediction(img_data):
     return res.json()
 
 
-st.set_page_config(page_title='植物病虫害识别', page_icon='🌼', layout='wide', initial_sidebar_state='auto')
+st.set_page_config(page_title='植物病虫害识别', page_icon='🌼', layout='centered', initial_sidebar_state='auto')
 st.balloons()
 st.title("植物病虫害识别🌼 ")
 st.sidebar.subheader('识别范围🔍')
