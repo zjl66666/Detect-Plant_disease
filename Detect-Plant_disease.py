@@ -1,11 +1,41 @@
 import requests as rq
 from apig_sdk import signer
 import streamlit as st
+import json
+
+identification_scope = """
+南瓜白粉病
+柑橘黄龙病（柑橘绿化）
+桃树叶斑病
+樱桃白粉病
+没有叶子
+玉米北方叶枯病
+玉米尾孢叶斑病 灰斑病
+玉米锈病
+甜椒菌斑病
+番茄叶斑病
+番茄叶螨、二斑叶螨病
+番茄叶霉菌
+番茄斑点疫霉病
+番茄早疫病
+番茄晚疫病
+番茄细菌斑
+番茄花叶病毒病
+番茄黄化曲叶病毒病
+苹果雪松苹果锈病
+苹果黑星病
+苹果黑腐病
+草莓叶枯病
+葡萄叶枯病（叶斑病）
+葡萄埃斯卡（黑麻疹）
+葡萄黑腐病
+马铃薯早疫病
+马铃薯晚疫病
+"""
 
 
 def get_prediction(img_data):
-    url = "https://7cdcf16693a1461a8d20e3f339732871.apig.cn-north-4.huaweicloudapis.com/v1/infers/5ebf7d61-188a-4a49" \
-          "-8031-c0bee020b469"
+    url = 'https://7cdcf16693a1461a8d20e3f339732871.apig.cn-north-4.huaweicloudapis.com/v1/infers/00f75539-a8b9-4af6-95e0-be2f9182e9e5'
     app_key = "db941e4460c0448e805a1d46471bad30"
     app_secret = "d50b85c6d8e54708a1f880fac30e1399"
 
@@ -20,68 +50,47 @@ def get_prediction(img_data):
     # files读取的
     files = {'images': img_data}
     res = rq.request(request.method, request.scheme + "://" + request.host + request.uri, headers=request.headers,
-                           files=files)
+                     files=files)
     return res.json()
 
-st.set_page_config(page_title='植物病虫害识别', page_icon='🌼', layout='centered', initial_sidebar_state='auto')
+
+st.set_page_config(page_title='植物病虫害识别', page_icon='🌼', layout='wide', initial_sidebar_state='auto')
 st.balloons()
 st.title("植物病虫害识别🌼 ")
-uploaded_file = st.file_uploader('选择一张植物病虫害叶子照片📷')
+st.sidebar.subheader('识别范围🔍')
+st.sidebar.text(identification_scope)
+uploaded_file = st.file_uploader('选择一张植物病虫害叶子照片🐛')
 if uploaded_file:
     st.image(uploaded_file, caption='上传的文件')
     img_data = uploaded_file.read()
-    try:
+    with st.spinner('识别中...'):
         pred = get_prediction(img_data)
-        pred_label = pred['predicted_label']
-        st.subheader(f'该病害最有可能为{pred_label}🐛')
-        with st.expander('查看更多信息'):
-            st.write('预测结果及其可能的概率')
-            for data in pred['scores']:
-                st.write('可能的病害:', data[0], '概率:', data[1])
-        import openai
-        messages = [{'role': 'system', 'content': 'You are a helpful assistant.'}]
-        st.write('下面是针对这种病害的简单介绍及防治方法')
-    except:
-        st.error('识别失败,请重新上传图片,下面是识别成功的示例')
-        pred_label = '苹果黑星病'
-        st.subheader(f'该病害最有可能为{pred_label}')
-        st.write("""下面是针对这种病害的简单介绍及防治方法苹果黑星病是一种由真菌引起的病害，其症状包括果实表面出现黑褐色斑点或斑块，严重的情况下会使整个果实腐烂。以下是预防和控制苹果黑星病的方法：清理果园：将树枝、落叶等有病害的植物部分及时清理掉，减少病菌生存环境。喷洒农药：在果树芽展期至花后初期，每7-10天喷洒一次杀菌剂，可有效控制黑星病。喷洒草酸铜：在果实成形前期进行喷洒，可以预防苹果黑星病的发生。换栽抗病品种：选择抗黑星病的苹果品种进行种植，可有效减少病害的发生。加强管理：对果园中的营养、灌溉等要进行科学的管理，增强苹果树的抗病性。""")
+    pred_label = pred['predicted_label']
+    st.success('✅识别成功')
+    col1,col2 = st.columns(2)
+    col1.subheader(f'该病害最有可能为{pred_label}')
+    sound = col2.button('播放语音')
+    with st.expander('查看更多信息'):
+        st.write('预测结果及其可能的概率')
+        for data in pred['scores']:
+            st.write('可能的病害:', data[0], '概率:', data[1])
+    # 读取json文件并展示info
+    if '健康' in pred_label:
+        st.subheader('该叶子健康😃')
+    else:
+        with open(f'./json数据/{pred_label}.json', 'r') as f:
+            data = json.load(f)
+            st.text(data['info'])
+            if sound:
+                info = f'该病害最有可能为{pred_label}'+data['info']
+                import pyttsx3
 
-
-#######################################################################################
-#
-# import requests as rq
-# import streamlit as st
-#
-#
-# def get_translate(text):
-#     # 先处理text
-#     st.write(text)
-#     text = text.split('___')[1]
-#     name = text.split('_')[0]
-#     disease = text.split('_')[1]
-#     post_text = name.lower() + ' ' + disease
-#     st.write(post_text)
-#     url = "https://fanyi.baidu.com/sug"
-#     data = {"kw": f"{post_text}"}
-#     response = rq.post(url, data=data)
-#     TranslateResult = response.json()['data']
-#     st.write(f"该词语的意思是:{TranslateResult[0]['v']}")
-#
-#
-# st.set_page_config(page_title='植物病虫害识别', page_icon='🌼', layout='centered', initial_sidebar_state='auto')
-# st.balloons()
-# st.title("植物病虫害识别🌼 ")
-# uploaded_file = st.file_uploader('选择一张植物病虫害叶子照片📷 ')
-# if uploaded_file:
-#     st.image(uploaded_file, caption='上传的文件')
-#     img_data = uploaded_file.read()
-#     pred_label = '苹果黑心病'
-#     st.subheader(f'该病害最有可能为{pred_label}🐛')
-#     st.write('下面是针对这种病害的简单介绍及防治方法')
-
-
-
-
-
-
+                engine = pyttsx3.init()
+                rate = engine.getProperty('rate')
+                engine.setProperty('rate', rate - 50)
+                engine.say(info)
+                # 开始语音播放后设置按钮使其停止
+                sound = col2.button('停止播放')
+                if sound:
+                    engine.stop()
+                    sound = col2.button('播放语音')
