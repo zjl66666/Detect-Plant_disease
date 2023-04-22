@@ -33,7 +33,6 @@ identification_scope = """
 马铃薯晚疫病
 """
 
-@st.cache_data(ttl=600)
 def get_prediction(img_data):
     url = 'https://7cdcf16693a1461a8d20e3f339732871.apig.cn-north-4.huaweicloudapis.com/v1/infers/00f75539-a8b9-4af6-95e0-be2f9182e9e5'
     app_key = "db941e4460c0448e805a1d46471bad30"
