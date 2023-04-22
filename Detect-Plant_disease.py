@@ -74,6 +74,8 @@ if uploaded_file:
     # 读取json文件并展示info
     if '健康' in pred_label:
         st.subheader('该叶子健康😃')
+    elif '没有'in pred_label:
+        st.subheader('请上传含有叶子的图片')
     else:
         with open(f'./json数据/{pred_label}.json', 'r') as f:
             data = json.load(f)
