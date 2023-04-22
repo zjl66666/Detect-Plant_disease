@@ -33,7 +33,7 @@ identification_scope = """
 马铃薯晚疫病
 """
 
-
+@st.cache_data(ttl=600)
 def get_prediction(img_data):
     url = 'https://7cdcf16693a1461a8d20e3f339732871.apig.cn-north-4.huaweicloudapis.com/v1/infers/00f75539-a8b9-4af6-95e0-be2f9182e9e5'
     app_key = "db941e4460c0448e805a1d46471bad30"
@@ -67,9 +67,7 @@ if uploaded_file:
         pred = get_prediction(img_data)
     pred_label = pred['predicted_label']
     st.success('✅识别成功')
-    col1,col2 = st.columns(2)
-    col1.subheader(f'该病害最有可能为{pred_label}')
-    sound = col2.button('播放语音')
+    st.subheader(f'识别结果为{pred_label}')
     with st.expander('查看更多信息'):
         st.write('预测结果及其可能的概率')
         for data in pred['scores']:
@@ -81,16 +79,14 @@ if uploaded_file:
         with open(f'./json数据/{pred_label}.json', 'r') as f:
             data = json.load(f)
             st.text(data['info'])
-            if sound:
-                info = f'该病害最有可能为{pred_label}'+data['info']
-                import pyttsx3
-
-                engine = pyttsx3.init()
-                rate = engine.getProperty('rate')
-                engine.setProperty('rate', rate - 50)
-                engine.say(info)
-                # 开始语音播放后设置按钮使其停止
-                sound = col2.button('停止播放')
-                if sound:
-                    engine.stop()
-                    sound = col2.button('播放语音')
+            # if sound:
+            #     info = f'该病害最有可能为{pred_label}'+data['info']
+            #     import pyttsx3
+            #     engine = pyttsx3.init()
+            #     rate = engine.getProperty('rate')
+            #     engine.setProperty('rate', rate - 50)
+            #     engine.say(info)
+            #     # 设置使其停止的功能
+            #
+            #     engine.runAndWait()
+            #     engine.stop()
