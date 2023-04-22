@@ -67,14 +67,12 @@ if uploaded_file:
         pred = get_prediction(img_data)
     pred_label = pred['predicted_label']
     st.success('✅识别成功')
-    col1,col2 = st.columns(2)
-    col1.subheader(f'识别结果为{pred_label}')
+    st.subheader(f'识别结果为{pred_label}')
     with st.expander('查看更多信息'):
         st.write('预测结果及其可能的概率')
         for data in pred['scores']:
             st.write('可能的病害:', data[0], '概率:', data[1])
     # 读取json文件并展示info
-    sound = col2.button('播放语音')
     if '健康' in pred_label:
         st.subheader('该叶子健康😃')
     else:
